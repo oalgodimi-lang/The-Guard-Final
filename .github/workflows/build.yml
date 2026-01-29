@@ -3,7 +3,7 @@ name: Build Sovereign Shield APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # يسمح لك بتشغيل البناء يدوياً
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,9 +26,7 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # إضافة مسار buildozer إلى النظام
           export PATH=$PATH:~/.local/bin
-          # بدء عملية البناء (سيقوم بتحميل NDK و SDK تلقائياً)
           buildozer android debug
         env:
           ACCEPT_SDK_LICENSE: "yes"
