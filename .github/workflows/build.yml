@@ -12,7 +12,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libgdbm-dev libncurses5-dev libreadline-gplv2-dev libssl-dev tk-dev libdb5.3-dev libexpat1-dev libffi-dev liblzma-dev
+          sudo apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libgdbm-dev libncurses5-dev libreadline-dev libssl-dev tk-dev libdb5.3-dev libexpat1-dev libffi-dev liblzma-dev
           python -m pip install --upgrade pip
           pip install buildozer cython==0.29.33
       - name: Build with Buildozer
