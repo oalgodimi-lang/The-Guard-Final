@@ -1,26 +1,24 @@
-[app]
-title = The Guard
-package.name = theguard
-package.domain = org.theguard
-source.dir = .
-source.include_exts = py,png,jpg,kv,atlas
-version = 0.7
-
-# [الصلاحيات السيادية]
-android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROUND_SERVICE
-
-specification = 
-orientation = portrait
-fullscreen = 1
-android.archs = arm64-v8a, armeabi-v7a
-android.allow_backup = False
-
-# [تعريف خدمة الخلفية]
-android.services = monitor:service.py
-
-# المستلزمات البرمجية
-requirements = python3,kivy,pyjnius,android
-
-[buildozer]
-log_level = 2
-warn_on_root = 1
+name: Build APK
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libgdbm-dev libncurses5-dev libreadline-gplv2-dev libssl-dev tk-dev libdb5.3-dev libexpat1-dev libffi-dev liblzma-dev
+          python -m pip install --upgrade pip
+          pip install buildozer cython==0.29.33
+      - name: Build with Buildozer
+        run: yes | buildozer android debug
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: The-Guard-Final-APK
+          path: bin/*.apk
