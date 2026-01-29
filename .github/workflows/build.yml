@@ -16,7 +16,7 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin
-          yes | buildozer android debug
+           buildozer android debug
         env:
           ACCEPT_SDK_LICENSE: "yes"
       - uses: actions/upload-artifact@v4
