@@ -1,6 +1,6 @@
 [app]
-title = Sovereign Shield
-package.name = sovereignshield
+title = The Guard
+package.name = theguard
 package.domain = im.manus.node7
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
