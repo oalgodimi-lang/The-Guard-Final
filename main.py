@@ -5,7 +5,6 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 import random
 
-# إعداد خلفية النظام السوداء لتعزيز الهيبة الرقمية
 Window.clearcolor = (0, 0, 0, 1)
 
 Builder.load_string('''
@@ -28,12 +27,12 @@ Builder.load_string('''
             color: 0, 1, 0, 1
             bold: True
         Label:
-            text: 'نظام الحارس - العقدة السابعة'
-            font_size: '16sp'
-            color: 0, 0.6, 0, 1
+            text: 'SOVEREIGNTY PROTOCOL ACTIVE'
+            font_size: '14sp'
+            color: 0, 0.5, 0, 1
         TextInput:
             id: code_input
-            hint_text: 'Sovereignty Code'
+            hint_text: 'Enter Sovereignty Code...'
             password: True
             multiline: False
             size_hint_y: None
@@ -42,8 +41,7 @@ Builder.load_string('''
             foreground_color: 0, 1, 0, 1
         Button:
             text: 'INITIALIZE SYSTEM'
-            size_hint_y: None
-            height: '60dp'
+            bold: True
             background_color: 0, 0.4, 0, 1
             on_press: root.verify()
 
@@ -54,25 +52,26 @@ Builder.load_string('''
         padding: 20
         spacing: 15
         Label:
-            text: 'CONTROL CENTER / مركز التحكم'
+            text: 'CONTROL CENTER / DASHBOARD'
             color: 0, 1, 0, 1
-            font_size: '22sp'
+            font_size: '20sp'
+            bold: True
         Button:
-            text: '📊 DATA MONITORING (المراقبة)'
+            text: '[📊] DATA MONITORING'
             background_color: 0.1, 0.1, 0.1, 1
             on_press: root.manager.current = 'monitor'
         Button:
-            text: '📡 NETWORK OBFUSCATOR (التشويش)'
+            text: '[📡] NETWORK OBFUSCATOR'
             background_color: 0.1, 0.1, 0.1, 1
             on_press: root.manager.current = 'obfuscator'
         Button:
-            text: '🧠 SECURITY ANALYST (التحليل)'
+            text: '[🧠] SECURITY ANALYST'
             background_color: 0.1, 0.1, 0.1, 1
             on_press: root.manager.current = 'analyst'
         Button:
-            text: 'LOGOUT / خروج'
+            text: 'LOGOUT SYSTEM'
             size_hint_y: None
-            height: '40dp'
+            height: '45dp'
             background_color: 0.5, 0, 0, 1
             on_press: root.manager.current = 'login'
 
@@ -83,17 +82,20 @@ Builder.load_string('''
         padding: 20
         Label:
             id: traffic_label
-            text: 'SCANNING TRAFFIC...'
-            font_size: '20sp'
+            text: 'SCANNING NETWORK...'
+            font_size: '22sp'
             color: 0, 1, 0, 1
         Label:
+            id: app_status
+            text: 'APPS SECURE'
+            color: 0, 0.7, 1, 1
+        Label:
             id: alert_label
-            text: 'STATUS: SECURE'
-            bold: True
+            text: 'STATUS: SHIELD ACTIVE'
         Label:
             id: countdown_label
             text: ''
-            font_size: '60sp'
+            font_size: '70sp'
             bold: True
             color: 1, 0, 0, 1
         Button:
@@ -108,13 +110,18 @@ Builder.load_string('''
         orientation: 'vertical'
         padding: 20
         Label:
-            text: 'NETWORK OBFUSCATION'
+            text: 'NETWORK OBFUSCATION ACTIVE'
             color: 0, 0.6, 1, 1
-            font_size: '22sp'
+            font_size: '18sp'
+            bold: True
+        Label:
+            id: app_shield
+            text: 'PROTECTING: SYSTEM'
+            color: 1, 1, 0, 1
         Label:
             id: packet_label
-            text: 'Sending Dummy Data...'
-            font_size: '12sp'
+            text: 'Injecting Dummy Stream...'
+            font_size: '11sp'
             color: 0.5, 0.5, 0.5, 1
         Button:
             text: 'STOP BRIDGE'
@@ -130,11 +137,11 @@ Builder.load_string('''
         spacing: 15
         Label:
             id: analyst_text
-            text: 'Security Expert Waiting for Logs...'
+            text: 'Expert waiting for security logs...'
             halign: 'center'
-            font_size: '18sp'
+            font_size: '16sp'
         Button:
-            text: 'EXPLAIN SECURITY EVENTS'
+            text: 'ANALYZE SECURITY EVENTS'
             size_hint_y: None
             height: '60dp'
             background_color: 0, 0.3, 0.6, 1
@@ -146,7 +153,6 @@ Builder.load_string('''
 
 class ShowcaseLogin(Screen):
     def verify(self):
-        # التحقق من رمز السيادة الخاص بك [cite: 2026-01-27]
         if self.ids.code_input.text == "freedom 499712":
             self.manager.current = 'dashboard'
 
@@ -159,30 +165,33 @@ class MonitorRoom(Screen):
         self.event = Clock.schedule_interval(self.update_traffic, 1)
     
     def update_traffic(self, dt):
-        out_val = random.randint(5, 120)
-        self.ids.traffic_label.text = f"OUTGOING: {out_val} kb/s"
+        apps = ["Telegram", "Facebook", "X (Twitter)", "WhatsApp", "System"]
+        selected_app = random.choice(apps)
+        out_val = random.randint(5, 150)
         
-        # إذا اكتشف النظام حركة بيانات مريبة (أعلى من 90) يبدأ التدمير الذاتي للردع [cite: 2026-01-24]
-        if out_val > 90 and not self.is_critical:
+        self.ids.traffic_label.text = f"APP: {selected_app}"
+        self.ids.app_status.text = f"TRAFFIC: {out_val} kb/s"
+        
+        if out_val > 120 and not self.is_critical:
             self.is_critical = True
-            self.ids.alert_label.text = "🚨 INTRUDER DETECTED - DATA LEAK!"
+            self.ids.alert_label.text = f"🚨 DATA LEAK DETECTED IN {selected_app.upper()}!"
             self.ids.alert_label.color = (1, 0, 0, 1)
             Clock.schedule_interval(self.start_self_destruct, 1)
         
         if not self.is_critical:
-            self.ids.alert_label.text = "STATUS: SECURE"
+            self.ids.alert_label.text = "STATUS: SHIELD ACTIVE"
             self.ids.alert_label.color = (0, 1, 0, 1)
 
     def start_self_destruct(self, dt):
         if self.destruction_counter > 0:
-            # وميض درامي (أحمر/أسود) لإرهاب المتسلل وإبهار الداعم
-            Window.clearcolor = (0.5, 0, 0, 1) if self.destruction_counter % 2 == 0 else (0, 0, 0, 1)
+            Window.clearcolor = (0.4, 0, 0, 1) if self.destruction_counter % 2 == 0 else (0, 0, 0, 1)
             self.ids.countdown_label.text = str(self.destruction_counter)
             self.destruction_counter -= 1
         else:
             Window.clearcolor = (0, 0, 0, 1)
-            self.ids.traffic_label.text = "SYSTEM PURGED"
-            self.ids.alert_label.text = "YOU HAVE NOTHING HERE, INTRUDER."
+            self.ids.traffic_label.text = "MEMORY PURGED"
+            self.ids.app_status.text = "ALL DATA WIPED"
+            self.ids.alert_label.text = "SAFE FROM INTRUDERS"
             self.ids.countdown_label.text = "OFFLINE"
             return False
 
@@ -195,20 +204,20 @@ class ObfuscatorRoom(Screen):
     def on_enter(self):
         self.ob_event = Clock.schedule_interval(self.send_dummy, 0.2)
     def send_dummy(self, dt):
-        # توليد بيانات وهمية لإخفاء نشاط التصفح الحقيقي [cite: 2026-01-24]
-        hex_data = "".join(random.choice("0123456789ABCDEF") for _ in range(32))
-        self.ids.packet_label.text = f"OBFUSCATING: 0x{hex_data} -> LOCAL NET"
+        apps = ["Telegram", "Facebook", "X", "Meta"]
+        hex_data = "".join(random.choice("0123456789ABCDEF") for _ in range(24))
+        self.ids.app_shield.text = f"PROTECTING: {random.choice(apps)}"
+        self.ids.packet_label.text = f"OBFUSCATING: 0x{hex_data}"
     def on_leave(self):
         Clock.unschedule(self.ob_event)
 
 class AnalystRoom(Screen):
     def explain(self):
-        # محاور التحليل المعالجة البرمجية [cite: 2026-01-24]
         explanations = [
-            "تم حجب محاولة دخول غير مصرح بها للشبكة المحلية.",
-            "بروتوكول التشويش النشط يمنع المتسلل من معرفة نوع تصفحك.",
-            "المعالجة: تم تحويل كافة البيانات الخارجة إلى صيغة Hex مشفرة.",
-            "النظام يكتشف محاولة سحب بيانات.. تم تفعيل حواجز العقدة السابعة."
+            "Unauthorized access to local network blocked.",
+            "Obfuscation bridge preventing packet sniffing.",
+            "All outgoing Telegram metadata converted to HEX.",
+            "Security shield active on Node 7 Bridge."
         ]
         self.ids.analyst_text.text = random.choice(explanations)
 
