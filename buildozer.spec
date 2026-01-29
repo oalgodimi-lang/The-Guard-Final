@@ -12,11 +12,11 @@ android.permissions = INTERNET, ACCESS_NETWORK_STATE, FOREGROUND_SERVICE
 
 # إعدادات البناء
 android.arch = arm64-v8a
-android.api = 31
+android.api = 33
 android.accept_sdk_license = True
 android.minapi = 21
 android.ndk = 25b
-android.sdk = 31
+android.sdk = 33
 
 # التمويه (أيقونة بسيطة)
 # android.presplash_color = #000000
