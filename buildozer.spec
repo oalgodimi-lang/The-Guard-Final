@@ -5,7 +5,7 @@ package.domain = im.manus.node7
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 1.0.0
-requirements = python3,kivy,android
+requirements = python3,kivy==2.2.1,android,cython==0.29.33
 
 # الصلاحيات السيادية
 android.permissions = INTERNET, ACCESS_NETWORK_STATE, FOREGROUND_SERVICE
@@ -15,7 +15,7 @@ android.arch = arm64-v8a
 android.api = 31
 android.accept_sdk_license = True
 android.minapi = 21
-android.ndk = 23b
+android.ndk = 25b
 android.sdk = 31
 
 # التمويه (أيقونة بسيطة)
