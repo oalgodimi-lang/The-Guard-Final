@@ -1,38 +1,30 @@
-name: Build Sovereign Shield APK
-
+name: Build APK
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Install dependencies
+      - name: Install Buildozer
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip3 install --user --upgrade Cython==0.29.33 buildozer
-
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin
           buildozer android debug
         env:
           ACCEPT_SDK_LICENSE: "yes"
-
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: SovereignShield-APK
+          name: Sovereign-Shield
           path: bin/*.apk
