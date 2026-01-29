@@ -1,5 +1,5 @@
 name:Final Build
-on: [push, workflow_dispatch]
+on: [push]
 jobs:
   android:
     runs-on: ubuntu-latest
