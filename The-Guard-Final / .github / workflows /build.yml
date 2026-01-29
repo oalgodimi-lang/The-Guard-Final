@@ -1,4 +1,4 @@
-name: Build
+name: Build Guard
 on: [push, workflow_dispatch]
 jobs:
   android:
