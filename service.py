@@ -2,68 +2,63 @@ import socket
 import threading
 import time
 import os
+from jnius import autoclass
 
-# --- إعدادات السيادة والتعمية (Node 7 Core) ---
+# --- إعدادات النواة (Node 7 Core) ---
 HOST = '127.0.0.1'
 PORT = 9999
-DNS_OVER_HTTPS = "1.1.1.1" # تشفير الوجهة لكسر حجب الميكروتك
-MTU_SIZE = 1200 # تجزئة الحزم لتخطى التلصص المحلي
+DNS_OVER_HTTPS = "1.1.1.1" 
+MTU_SIZE = 1200 # تقنية القرين لتجزئة الحزم
 
 def apply_stealth_filters(builder):
-    """حقن بروتوكول التعمية الشاملة داخل نفق الـ VPN"""
+    """حقن بروتوكولات التعمية الشاملة"""
     try:
-        # 1. تشفير DNS: يمنع صاحب الراوتر من رؤية المواقع التي تطلبها
         builder.addDnsServer(DNS_OVER_HTTPS)
-        
-        # 2. تعمية الهوية: يظهر جهازك كـ 'شبح' في لوحة التحكم
         builder.setSession("Sovereign_Node7_Ghost")
-        
-        # 3. تجزئة الحزم: تصغير الـ MTU يربك أجهزة الرقابة المحلية
         builder.setMtu(MTU_SIZE)
-        
-        # 4. التوجيه الكامل: حماية مسار البيانات بالكامل
         builder.addRoute("0.0.0.0", 0)
-        
-        print("[🛡️] STEALTH ACTIVE: DNS Encrypted & Packet Fragmentation Applied.")
+        print("[🛡️] Stealth Protocols Injected Successfully.")
     except Exception as e:
-        print(f"[X] Stealth Injection Failed: {e}")
+        print(f"[X] Injection Error: {e}")
 
 def start_socket_server():
-    """خادم المقابس لاستقبال أوامر التفعيل من الواجهة"""
+    """خادم المقابس للتواصل بين الواجهة والنواة"""
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         server.bind((HOST, PORT))
         server.listen(1)
-        print(f"[🛡️] Socket Server Listening on {HOST}:{PORT}")
+        print(f"[🛡️] Core Listening on {HOST}:{PORT}")
         while True:
             client, addr = server.accept()
             data = client.recv(1024).decode('utf-8')
             if data == "ACTIVATE_STEALTH":
-                print("[!] Stealth Command Received. Initializing Core Protocols...")
-                # هنا سيتم استدعاء محرك الـ VPN في التحديث القادم
+                print("[!] Stealth Command Received at Core.")
+                # هنا يتم استدعاء المحرك في التحديثات القادمة
             client.close()
     except Exception as e:
         print(f"Socket Server Error: {e}")
 
-def start_service_binding():
-    """ربط الخدمة بنظام أندرويد لمنع الانهيار الفوري"""
+def start_foreground_service():
+    """إرغام أندرويد على إبقاء النواة حية (حل مشكلة Unresponsive)"""
     try:
-        from android import python_act_service
-        print("[🛡️] Android Service Binding Successful")
-    except ImportError:
-        print("[!] Not running on Android or Python-for-Android missing")
+        # ربط الخدمة بنظام أندرويد بشكل رسمي
+        PythonService = autoclass('org.kivy.android.PythonService')
+        if PythonService.mService:
+            # تشغيل كخدمة أمامية لمنع النظام من قتل العملية
+            PythonService.mService.startForeground(1, None)
+            print("[🛡️] SERVICE STATUS: FOREGROUND ACTIVE")
     except Exception as e:
-        print(f"[X] Binding Error: {e}")
+        print(f"[!] Foreground Binding Warning: {e}")
 
 if __name__ == '__main__':
-    # 1. تشفير التواصل الداخلي (الأعصاب)
+    # 1. تشغيل "الأعصاب" (خادم التواصل)
     threading.Thread(target=start_socket_server, daemon=True).start()
     
-    # 2. إبلاغ النظام بأن الخدمة تعمل (منع الانهيار)
-    start_service_binding()
+    # 2. تشغيل "القلب" (الخدمة الأمامية)
+    start_foreground_service()
 
-    # 3. حلقة البقاء (KEEP ALIVE)
-    print("[🛡️] Node 7 Service is Pulse-Active.")
+    # 3. نبض البقاء
+    print("[🛡️] Node 7 Heartbeat Started.")
     while True:
         time.sleep(1)
