@@ -4,7 +4,7 @@ package.name = guard_node7
 package.domain = org.sovereign.freedom
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
-version = 1.0.1
+version = 1.0.2
 
 # الصلاحيات السيادية للتحكم الكامل وتفعيل الدرع
 android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROUND_SERVICE
