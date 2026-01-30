@@ -4,7 +4,7 @@ package.name = guard_node7
 package.domain = org.sovereign.freedom
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
-version = 1.0.2
+version = 1.0.3
 
 # الصلاحيات السيادية للتحكم الكامل وتفعيل الدرع
 android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROUND_SERVICE
@@ -13,7 +13,7 @@ android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROU
 android.services = monitor:service.py
 
 # المتطلبات البرمجية الأساسية
-requirements = python3, kivy, android, pyjnius, osc
+requirements = python3, kivy, android, pyjnius, 
 
 orientation = portrait
 android.archs = arm64-v8a, armeabi-v7a
