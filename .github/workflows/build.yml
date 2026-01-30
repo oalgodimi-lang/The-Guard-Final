@@ -18,19 +18,17 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          # تثبيت المكتبات الأساسية والضرورية للبناء على نظام Ubuntu الحديث
           sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools git zip unzip openjdk-17-jdk
           python -m pip install --upgrade pip
-          # تحديد نسخة Cython لضمان استقرار Kivy كما ناقشنا
           pip install buildozer cython==0.29.33
 
       - name: Build with Buildozer
-        # استخدمنا -v للحصول على تقرير مفصل ومنع انقطاع الاتصال (Broken pipe)
-        # وأزلنا "yes |" لأنها تسبب مشاكل في بيئة GitHub
-        run: buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: The-Guard-Sovereign-Edition
-          path: bin/*.apk
+        run: |
+          # هذه الخطوة ستقوم بقبول جميع تراخيص أندرويد يدوياً قبل بدء البناء
+          # لتجنب توقف النظام عند سؤال (Accept? y/N)
+          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          mkdir -p $ANDROID_SDK_ROOT/licenses
+          echo -e "8933bad161af4178b1185d1a37fbf41ea5269c55\nd5641931485054d24606f697478d3864102e5c9c\n24333f8a63b68997023c4a9d74f0391219139f22" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
+          
+          # الآن نبدأ البناء مع تفعيل خاصية القبول التلقائي من داخل buildozer
+          buildozer -v android debug
