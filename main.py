@@ -50,8 +50,8 @@ class GuardInterface(BoxLayout):
 
     def start_listening(self):
         try:
-            osc.init()
-            osc.bind(self.on_status_received, '/status')
+           # osc.init()
+          #  osc.bind(self.on_status_received, '/status')
             threading.Thread(target=self.listen_loop, daemon=True).start()
             self.status_label.text = '[b]SYSTEM STATUS: PROTECTED[/b]'
             self.status_label.color = (0, 1, 0, 1)
@@ -61,7 +61,7 @@ class GuardInterface(BoxLayout):
     def listen_loop(self):
         while True:
             try:
-                osc.readQueue()
+             #   osc.readQueue()
             except:
                 pass
 
