@@ -9,8 +9,9 @@ import threading
 try:
     from kivy.lib import osc
     OSC_AVAILABLE = True
-except ImportError:
+except:
     OSC_AVAILABLE = False
+    print("OSC not found, switching to offline mode")
 
 class GuardInterface(BoxLayout):
     def __init__(self, **kwargs):
