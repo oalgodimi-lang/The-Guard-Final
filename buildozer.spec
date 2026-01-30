@@ -13,7 +13,7 @@ android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROU
 android.services = monitor:service.py
 
 # المتطلبات البرمجية الأساسية
-requirements = python3,kivy,android,pyjnius
+requirements = python3, kivy, android, pyjnius, osc
 
 orientation = portrait
 android.archs = arm64-v8a, armeabi-v7a
