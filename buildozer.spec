@@ -6,16 +6,22 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 1.0.0
 
-# الصلاحيات السيادية للتحكم الكامل
-android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROUND_SERVICE, ACCESS_WIFI_STATE
+# الصلاحيات السيادية للتحكم الكامل وتفعيل الدرع
+android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROUND_SERVICE
 
-# تشغيل الحارس في الخفاء
+# تشغيل الحارس في الخفاء (الدرع الخلفي)
 android.services = monitor:service.py
 
+# المتطلبات البرمجية الأساسية
 requirements = python3,kivy,android,pyjnius
 
 orientation = portrait
 android.archs = arm64-v8a, armeabi-v7a
-android.api = 31
+
+# تغيير الـ API لضمان التوافق مع المصنع وتجاوز أخطاء البناء
+android.api = 30
+android.minapi = 21
+android.sdk = 30
+
 [buildozer]
 log_level = 2
