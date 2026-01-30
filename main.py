@@ -6,18 +6,18 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.clock import Clock
 import socket
+import time
+import threading
 
 class GuardInterface(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation='vertical', padding=30, spacing=20, **kwargs)
         
-        # عنوان النظام
         self.add_widget(Label(
             text='[b]NODE 7: SOVEREIGN SHIELD[/b]', 
             markup=True, font_size='24sp', size_hint_y=0.1, color=(0, 0.7, 1, 1)
         ))
         
-        # حقل إدخال كلمة السر (الCipher)
         self.code_input = TextInput(
             hint_text='Enter Freedom Cipher...',
             password=True, multiline=False, size_hint_y=0.1,
@@ -25,7 +25,6 @@ class GuardInterface(BoxLayout):
         )
         self.add_widget(self.code_input)
 
-        # زر التفعيل الأخضر (حقن البروتوكول)
         self.btn = Button(
             text='ACTIVATE STEALTH MODE', 
             size_hint_y=0.15, background_color=(0, 0.8, 0, 1),
@@ -34,7 +33,6 @@ class GuardInterface(BoxLayout):
         self.btn.bind(on_press=lambda x: self.activate_node(self.code_input.text))
         self.add_widget(self.btn)
 
-        # لوحة السجلات الحية
         self.scroll_view = ScrollView(size_hint_y=0.6)
         self.log_label = Label(
             text="[System Ready]\n>> Waiting for Freedom Cipher...\n",
@@ -46,22 +44,31 @@ class GuardInterface(BoxLayout):
         self.add_widget(self.scroll_view)
 
     def activate_node(self, password):
-        """إرسال أمر التفعيل للنواة عبر المقابس"""
         if password == "freedom":
-            self.update_log("[!] Cipher Accepted. Connecting to Core...")
-            if self.send_socket_command("ACTIVATE_STEALTH"):
-                self.update_log("[✔] GHOST MODE: DNS Encrypted & Identity Masked.")
-                self.btn.text = "SHIELD ACTIVE"
-                self.btn.background_color = (0, 0.5, 1, 1)
-            else:
-                self.update_log("[X] Communication Error: Core is unresponsive.")
+            self.update_log("[!] Cipher Accepted. Linking to Core...")
+            # تشغيل محاولات الاتصال في خيط منفصل لمنع تجمد الواجهة
+            threading.Thread(target=self.connection_retry_logic).start()
         else:
             self.update_log("[X] Access Denied: Invalid Cipher.")
+
+    def connection_retry_logic(self):
+        for i in range(5): # محاولة الاتصال 5 مرات
+            self.update_log(f">> Attempting to wake Core (Trial {i+1}/5)...")
+            if self.send_socket_command("ACTIVATE_STEALTH"):
+                self.update_log("[✔] GHOST MODE ACTIVE: Shield Engaged.")
+                Clock.schedule_once(lambda dt: self.set_button_success())
+                return
+            time.sleep(1.5)
+        self.update_log("[X] Final Error: Core is unresponsive. Restart App.")
+
+    def set_button_success(self):
+        self.btn.text = "SHIELD ACTIVE"
+        self.btn.background_color = (0, 0.5, 1, 1)
 
     def send_socket_command(self, cmd):
         try:
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client.settimeout(2)
+            client.settimeout(1)
             client.connect(('127.0.0.1', 9999))
             client.send(cmd.encode('utf-8'))
             client.close()
