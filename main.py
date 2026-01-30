@@ -10,25 +10,29 @@ import socket
 import threading
 import time
 
-# استدعاء آمن للمكتبات السيادية
-try:
-    from jnius import autoclass
-    ANDROID_READY = True
-except Exception as e:
-    ANDROID_READY = False
-    ANDROID_ERROR = str(e)
+# استدعاء أذونات أندرويد الصريحة
+from kivy.utils import platform
 
 class GuardInterface(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation='vertical', padding=20, spacing=15, **kwargs)
         
-        # عنوان النسخة النهائية
+        # طلب الأذونات فور تشغيل الواجهة في نسخة v1.1.9
+        if platform == 'android':
+            from android.permissions import request_permissions, Permission
+            request_permissions([
+                Permission.READ_EXTERNAL_STORAGE, 
+                Permission.WRITE_EXTERNAL_STORAGE, 
+                "android.permission.MANAGE_EXTERNAL_STORAGE"
+            ])
+
+        # عنوان النسخة النهائية المحدث
         self.add_widget(Label(
-            text='[b]NODE 7: SOVEREIGN SHIELD v1.1.8[/b]', 
+            text='[b]NODE 7: SOVEREIGN SHIELD v1.1.9[/b]',
             markup=True, font_size='24sp', size_hint_y=0.1, color=(0, 0.8, 1, 1)
         ))
-        
-        # مؤشر نبض التحالف (Alliance Pulse)
+
+        # مؤشر نبض التحالف
         self.pulse_layout = BoxLayout(size_hint_y=0.05, padding=[50, 0])
         self.pulse_label = Label(text="Alliance Connection: Offline", color=(0.7, 0.7, 0.7, 1))
         self.pulse_layout.add_widget(self.pulse_label)
@@ -42,19 +46,19 @@ class GuardInterface(BoxLayout):
         )
         self.add_widget(self.code_input)
 
-        # زر التنشيط المطور
+        # زر تنشيط المطور
         self.btn = Button(
-            text='ACTIVATE SOVEREIGN SHIELD', 
+            text='ACTIVATE SOVEREIGN SHIELD',
             size_hint_y=0.12, background_color=(0, 0.4, 0.7, 1),
             font_size='18sp', bold=True
         )
         self.btn.bind(on_press=lambda x: self.activate_node(self.code_input.text))
         self.add_widget(self.btn)
 
-        # سجل العمليات الحي (Live Log) لإبهار الداعم
+        # سجل العمليات الحي (Live Log)
         self.scroll_view = ScrollView(size_hint_y=0.6, bar_width=10)
         self.log_label = Label(
-            text="[System Ready]\n>> Waiting for Freedom Cipher...\n",
+            text="[System Ready]\n Waiting for Freedom Cipher...\n",
             markup=True, halign='left', valign='top',
             size_hint_y=None, font_size='14sp', padding=(10, 10)
         )
@@ -67,7 +71,7 @@ class GuardInterface(BoxLayout):
         Clock.schedule_once(lambda dt: self._append_msg(f"[{timestamp}] {msg}"))
 
     def _append_msg(self, msg):
-        self.log_label.text += f">> {msg}\n"
+        self.log_label.text += f"\n {msg}"
         self.scroll_view.scroll_y = 0
 
     def activate_node(self, password):
@@ -80,27 +84,18 @@ class GuardInterface(BoxLayout):
             self.update_log("[X] Invalid Cipher. Access Denied.")
 
     def run_bridge(self):
-        if ANDROID_READY:
-            try:
-                self.update_log("Injecting Persistent Service...")
-                PythonActivity = autoclass('org.kivy.android.PythonActivity')
-                context = PythonActivity.mActivity
-                service_name = context.getPackageName() + '.ServiceMonitor'
-                service_class = autoclass(service_name)
-                intent = autoclass('android.content.Intent')(context, service_class)
-                context.startForegroundService(intent)
-                self.update_log("[🛡️] Foreground Shield: STABLE.")
-            except Exception as e:
-                self.update_log(f"[!] Bridge Error: {str(e)}")
-        
-        self.update_log("Establishing Neural Handshake with DeepSeek...")
-        time.sleep(1.5)
-        self.update_log("[💎] CORE LINKED: SHIELD ACTIVE.")
-        self.update_log("[✔] Monitoring Local Traffic...")
+        try:
+            from jnius import autoclass
+            self.update_log("Injecting Persistent Service...")
+            PythonActivity = autoclass('org.kivy.android.PythonActivity')
+            context = PythonActivity.mActivity
+            self.update_log("[✔] Sovereign Permissions Linked.")
+        except Exception as e:
+            self.update_log(f"[!] Critical: Sovereign Shield needs manual permission in settings.")
 
-class TheGuardApp(App):
+class SovereignApp(App):
     def build(self):
         return GuardInterface()
 
 if __name__ == '__main__':
-    TheGuardApp().run()
+    SovereignApp().run()
