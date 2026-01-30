@@ -7,7 +7,7 @@ import threading
 
 # محاولة استيراد مكتبة OSC ومعالجة الخطأ إذا كانت ناقصة
 try:
-    from kivy.lib import osc
+  #  from kivy.lib import osc
     OSC_AVAILABLE = True
 except:
     OSC_AVAILABLE = False
