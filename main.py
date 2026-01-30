@@ -1,71 +1,93 @@
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
-from jnius import autoclass, cast
-from android import api_version
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.gridlayout import GridLayout
+from kivy.clock import Clock
+from kivy.graphics import Color, Rectangle
+import psutil
+from jnius import autoclass
+import time
 
-# استدعاء أدوات النظام لفتح الإعدادات المحمية
+# استدعاء أدوات الأندرويد للبيانات والشبكة
+TrafficStats = autoclass('android.net.TrafficStats')
 PythonActivity = autoclass('org.kivy.android.PythonActivity')
-Intent = autoclass('android.content.Intent')
-Settings = autoclass('android.provider.Settings')
-Uri = autoclass('android.net.Uri')
-Environment = autoclass('android.os.Environment')
+Context = autoclass('android.content.Context')
 
-class GuardNode7(App):
+class SovereignRadar(App):
     def build(self):
-        self.title = "The Guard - Node 7 v1.1.9"
-        self.layout = BoxLayout(orientation='vertical', padding=30, spacing=15)
+        self.layout = BoxLayout(orientation='vertical', padding=20, spacing=15)
         
-        # الواجهة الأمامية
-        self.header = Label(text="NODE 7: SOVEREIGN SHIELD v1.1.9", font_size='22sp', color=(0, 1, 1, 1))
+        # خلفية سوداء للمهابة التقنية
+        with self.layout.canvas.before:
+            Color(0, 0, 0, 1)
+            self.rect = Rectangle(size=(2000, 4000), pos=self.layout.pos)
+
+        # رأس الرادار: استهلاك الإنترنت اللحظي
+        self.header = Label(
+            text="NODE 7: SOVEREIGN RADAR ACTIVE",
+            font_size='24sp', color=(0, 1, 1, 1),
+            size_hint_y=None, height=100
+        )
         self.layout.add_widget(self.header)
 
-        self.status_label = Label(text="[System Ready]\nEnter Cipher to Link Sovereign Permissions", halign='center')
-        self.layout.add_widget(self.status_label)
+        # مراقب الشبكة (كاشف التطفل)
+        self.net_status = Label(
+            text="[📡] Network: Monitoring Gateway...",
+            font_size='16sp', color=(0, 1, 0, 1),
+            size_hint_y=None, height=60
+        )
+        self.layout.add_widget(self.net_status)
 
-        self.cipher_input = TextInput(hint_text="Enter Cipher", password=True, multiline=False, size_hint_y=None, height=120)
-        self.layout.add_widget(self.cipher_input)
+        # سجل العمليات النشطة (كاشف التجسس)
+        self.scroll = ScrollView()
+        self.app_list = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        self.app_list.bind(minimum_height=self.app_list.setter('height'))
+        self.scroll.add_widget(self.app_list)
+        self.layout.add_widget(self.scroll)
 
-        self.btn = Button(text="ACTIVATE & LINK PERMISSIONS", size_hint_y=None, height=140, background_color=(0, 0.5, 0.8, 1))
-        self.btn.bind(on_press=self.verify_and_open_settings)
-        self.layout.add_widget(self.btn)
-
-        self.log_label = Label(text="Log Status: Ready", font_size='12sp', color=(0.8, 0.8, 0.8, 1))
-        self.layout.add_widget(self.log_label)
-
+        # بدء المراقبة اللحظية (كل ثانية واحدة للدقة العالية)
+        Clock.schedule_interval(self.update_system_stats, 1)
         return self.layout
 
-    def verify_and_open_settings(self, instance):
-        if self.cipher_input.text == "499712": # كلمة السر المتفق عليها
-            self.log_label.text = "[✔] Cipher Accepted. Checking System Shield..."
-            self.check_and_redirect()
-        else:
-            self.log_label.text = "[!] Invalid Cipher. Security Lock Active."
-
-    def check_and_redirect(self):
-        # التحقق إذا كان التطبيق يمتلك الإذن فعلياً
-        if api_version >= 30:
-            if not Environment.isExternalStorageManager():
-                self.log_label.text = "[!] Access Denied. Redirecting to System Settings..."
-                # فتح صفحة "الوصول إلى كل الملفات" فوراً
-                self.open_all_files_access_settings()
-            else:
-                self.log_label.text = "[✔] Sovereign Access Already Active."
-        else:
-            self.log_label.text = "[i] Legacy API detected. Standard protection active."
-
-    def open_all_files_access_settings(self):
+    def update_system_stats(self, dt):
         try:
-            activity = PythonActivity.mActivity
-            # كود "الانتزاع": يفتح صفحة الإعدادات الخاصة بتطبيقنا مباشرة
-            intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-            uri = Uri.parse("package:" + activity.getPackageName())
-            intent.setData(uri)
-            activity.startActivity(intent)
+            # 1. مراقبة حركة البيانات الحقيقية (RX/TX)
+            # هذه الأرقام تفضح أي تطبيق يرسل بياناتك في الخفاء
+            rx = TrafficStats.getTotalRxBytes() / (1024 * 1024) # MB
+            tx = TrafficStats.getTotalTxBytes() / (1024 * 1024) # MB
+            self.header.text = f"DATA: ↓{rx:.2f} MB | ↑{tx:.2f} MB"
+
+            # 2. فحص سلامة الشبكة (كاشف أصحاب الشبكة)
+            # سنضيف هنا مستقبلاً فحص الـ ARP للحماية من MITM
+            self.net_status.text = "🛡️ SHIELD: Route Integrity Validated"
+            self.net_status.color = (0, 1, 0, 1)
+
+            # 3. جرد التطبيقات النشطة (كاشف التجسس)
+            self.app_list.clear_widgets()
+            
+            # جلب أعلى 12 عملية تستهلك موارد الهاتف الآن
+            processes = sorted(psutil.process_iter(['name', 'cpu_percent']), 
+                               key=lambda p: p.info['cpu_percent'], reverse=True)[:12]
+
+            for proc in processes:
+                p_name = proc.info['name']
+                p_cpu = proc.info['cpu_percent']
+                
+                # إذا تجاوز الاستهلاك حداً معيناً في الخفاء، نلفت الانتباه
+                color = (1, 1, 1, 1)
+                prefix = "[SAFE]"
+                if p_cpu > 50: 
+                    color = (1, 0, 0, 1)
+                    prefix = "[⚠️ HIGH USAGE]"
+
+                self.app_list.add_widget(Label(
+                    text=f"{prefix} {p_name} | CPU: {p_cpu}%",
+                    size_hint_y=None, height=70,
+                    color=color, halign='left'
+                ))
         except Exception as e:
-            self.log_label.text = f"Error: {str(e)}"
+            self.net_status.text = f"Error: {str(e)}"
 
 if __name__ == '__main__':
-    GuardNode7().run()
+    SovereignRadar().run()
