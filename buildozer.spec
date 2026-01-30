@@ -4,10 +4,10 @@ package.name = guard_node7
 package.domain = org.sovereign.freedom
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
-version = 1.1.0
+version = 1.1.2
 
 # الصلاحيات السيادية للتحكم الكامل وتفعيل الدرع
-android.permissions = INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROUND_SERVICE
+android.permissions =  INTERNET, ACCESS_NETWORK_STATE, BIND_VPN_SERVICE, FOREGROUND_SERVICE, POST_NOTIFICATIONS
 
 # تشغيل الحارس في الخفاء (الدرع الخلفي)
 android.services = monitor:service.py
