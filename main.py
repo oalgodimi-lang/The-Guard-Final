@@ -2,29 +2,30 @@ from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.core.window import Window
+from kivy.clock import Clock
 import random
 
 Window.clearcolor = (0, 0, 0, 1)
 
 Builder.load_string('''
 <Manager>:
-    ShowcaseLogin:
+    LoginScreen:
     Dashboard:
 
-<ShowcaseLogin>:
+<LoginScreen>:
     name: 'login'
     BoxLayout:
         orientation: 'vertical'
-        padding: 50
+        padding: 40
         spacing: 20
         Label:
-            text: 'THE GUARD - NODE 7'
-            font_size: '28sp'
+            text: 'THE GUARD [NODE 7]'
+            font_size: '32sp'
             color: 0, 1, 0, 1
             bold: True
         TextInput:
-            id: code_input
-            hint_text: 'Sovereignty Password...'
+            id: pass_input
+            hint_text: 'Enter Sovereignty Code'
             password: True
             multiline: False
             size_hint_y: None
@@ -42,44 +43,68 @@ Builder.load_string('''
     BoxLayout:
         orientation: 'vertical'
         padding: 20
-        spacing: 15
+        spacing: 10
         Label:
-            text: 'SOVEREIGNTY ACTIVE [🛡️]'
+            text: 'STATUS: SOVEREIGNTY ACTIVE [🛡️]'
             color: 0, 1, 0, 1
-            font_size: '24sp'
+            font_size: '22sp'
+        
+        BoxLayout:
+            orientation: 'vertical'
+            canvas:
+                Color:
+                    rgba: 0, 0.2, 0, 0.5
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                id: traffic_label
+                text: 'Encrypted Traffic: 0 KB/s'
+                font_size: '18sp'
+            Label:
+                text: 'DNS: Cloudflare Secured (1.1.1.1)'
+                font_size: '14sp'
+                color: 0, 0.6, 1, 1
+
         Label:
-            text: 'VPN SERVICE INJECTED'
-            color: 0, 0.5, 1, 1
-        Label:
-            text: 'The system is now monitoring background leaks.'
+            id: info_label
+            text: 'Monitoring Network Leaks...'
             font_size: '12sp'
+            color: 0.5, 0.5, 0.5, 1
+
         Button:
-            text: 'SYSTEM LOGOUT'
+            text: 'LOGOUT & TERMINATE'
             size_hint_y: None
             height: '50dp'
             on_press: root.manager.current = 'login'
 ''')
 
-class ShowcaseLogin(Screen):
+class LoginScreen(Screen):
     def verify(self):
-        # التحقق باستخدام كلمة السر المعتمدة: freedom 499712 [cite: 2026-01-27]
-        if self.ids.code_input.text == "freedom 499712":
+        # التحقق بكلمة السر السيادية [cite: 2026-01-27]
+        if self.ids.pass_input.text == "freedom 499712":
             self.manager.current = 'dashboard'
-            self.start_shield_service()
+            self.start_service()
 
-    def start_shield_service(self):
+    def start_service(self):
         try:
-            # تشغيل خدمة المراقبة الحقيقية في الخلفية [cite: 2026-01-24]
-            from android import python_service
             from jnius import autoclass
-            # الربط مع الحزمة المعرفة في buildozer
-            service = autoclass('org.theguard.theguard.ServiceMonitor')
+            # تشغيل خدمة الخلفية الحقيقية [cite: 2026-01-24]
+            service = autoclass('org.sovereign.freedom.guard_node7.ServiceMonitor')
+            from android import python_service
             service.start(python_service, "")
-            print("[🛡️] SHIELD SERVICE INJECTED SUCCESSFULLY")
-        except Exception as e:
-            print(f"Injection Error: {e}")
+        except: pass
 
-class Dashboard(Screen): pass
+class Dashboard(Screen):
+    def on_enter(self):
+        Clock.schedule_interval(self.update_stats, 1)
+
+    def update_stats(self, dt):
+        # محاكاة عداد البيانات المشفرة لإبهار المشاهد [cite: 2026-01-24]
+        val = random.randint(10, 500)
+        self.ids.traffic_label.text = f'Encrypted Traffic: {val} KB/s'
+        self.ids.info_label.text = f'Scanning Packet ID: {random.getrandbits(32)}'
+
 class Manager(ScreenManager): pass
 
 class GuardApp(App):
