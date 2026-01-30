@@ -1,41 +1,27 @@
 [app]
-# (section) عنوان التطبيق وهويته
 title = The Guard - Node 7
-package.name = theguard
+package.name = theguard_n7
 package.domain = org.sovereign
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
+version = 1.2.0
 
-# (section) المكتبات المطلوبة للسيادة
-# أضفنا pyjnius للوصول إلى إعدادات النظام و android لطلب الأذونات
-requirements = python3,kivy==2.3.0,pyjnius,android,requests,hostpython3
+# المكتبات المطلوبة للرادار الحقيقي والشبكة
+requirements = python3,kivy==2.3.0,pyjnius,android,requests,psutil,hostpython3
 
-version = 1.1.9
+orientation = portrait
+osx.python_version = 3
+osx.kivy_version = 1.9.1
+fullscreen = 0
 
-# (section) صلاحيات الدرع (المفتاح السيادي)
-# السطر التالي هو الأهم لظهور اسم التطبيق في قائمة "الوصول إلى كل الملفات"
-android.permissions = INTERNET, FOREGROUND_SERVICE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, MANAGE_EXTERNAL_STORAGE
+# الصلاحيات السيادية (أساس العمل)
+android.permissions = INTERNET, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, MANAGE_EXTERNAL_STORAGE, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE
 
-# (section) إعدادات نظام أندرويد (API 33 كما في صورتك)
 android.api = 33
 android.minapi = 21
+android.sdk = 33
 android.ndk = 25b
-android.private_storage = True
-
-# (section) تعديلات المانيفست الإجبارية (بناءً على نصيحة ديب سيك)
-# هذا الجزء يجبر النظام على الاعتراف بالتطبيق كمدير ملفات
-android.manifest_extras = <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-android.manifest_application_extras = android:requestLegacyExternalStorage="true"
-
-# (section) ربط الخدمة الخلفية
-android.services = monitor:service.py
-
-# (section) إعدادات الاستقرار والتحميل
-android.copy_libs = 1
 android.archs = arm64-v8a, armeabi-v7a
-android.allow_backup = True
-orientation = portrait
 
-[buildozer]
-log_level = 2
-warn_on_root = 1
+# تفعيل الوصول للملفات في أندرويد 11+
+android.manifest.application_arguments = --manage-external-storage
