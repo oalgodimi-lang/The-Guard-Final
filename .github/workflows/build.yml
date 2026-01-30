@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 # استخدام نسخة مستقرة ومجربة
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
@@ -30,9 +30,14 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # قبول التراخيص عبر تمرير "y" بشكل مباشر ومنظم لأداة buildozer نفسها
-          # هذه الطريقة تمنع Broken pipe وتضمن تحميل Aidl و SDK Manager تلقائياً
+          # استخدام yes مع -v لضمان قبول التراخيص ومنع الـ Broken pipe
           yes | buildozer -v android debug
         env:
-          # نترك لـ buildozer حرية إدارة المسارات لتجنب خطأ "sdkmanager not found"
           ACCEPT_SDK_LICENSE: "True"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: The-Guard-Sovereign-Edition
+          # البحث في كل المجلدات لضمان إيجاد الملف بعد النجاح
+          path: "**/*.apk"
