@@ -8,11 +8,11 @@ source.include_exts = py,png,jpg,kv,atlas
 # المكتبات المطلوبة للسيادة
 requirements = python3,kivy==2.3.0,pyjnius,android,requests,hostpython3
 
-version = 1.1.8
+version = 1.1.9
 
 # صلاحيات الدرع
-android.permissions = INTERNET, FOREGROUND_SERVICE, WAKE_LOCK, POST_NOTIFICATIONS, RECEIVE_BOOT_COMPLETED
-
+android.permissions = 
+INTERNET, FOREGROUND_SERVICE, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE, MANAGE_EXTERNAL_STORAGE
 android.api = 33
 android.minapi = 21
 android.ndk = 25b
