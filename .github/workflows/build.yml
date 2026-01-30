@@ -4,8 +4,8 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-22.04 # استخدام نسخة مستقرة ومجربة
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -15,20 +15,24 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools git zip unzip openjdk-17-jdk
+          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools git zip unzip
           python -m pip install --upgrade pip
-          pip install buildozer cython==0.29.33
+          pip install buildozer cython==0.29.33 kivy
 
       - name: Build with Buildozer
         run: |
-          # هذه الخطوة ستقوم بقبول جميع تراخيص أندرويد يدوياً قبل بدء البناء
-          # لتجنب توقف النظام عند سؤال (Accept? y/N)
-          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          mkdir -p $ANDROID_SDK_ROOT/licenses
-          echo -e "8933bad161af4178b1185d1a37fbf41ea5269c55\nd5641931485054d24606f697478d3864102e5c9c\n24333f8a63b68997023c4a9d74f0391219139f22" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
-          
-          # الآن نبدأ البناء مع تفعيل خاصية القبول التلقائي من داخل buildozer
-          buildozer -v android debug
+          # قبول التراخيص عبر تمرير "y" بشكل مباشر ومنظم لأداة buildozer نفسها
+          # هذه الطريقة تمنع Broken pipe وتضمن تحميل Aidl و SDK Manager تلقائياً
+          yes | buildozer -v android debug
+        env:
+          # نترك لـ buildozer حرية إدارة المسارات لتجنب خطأ "sdkmanager not found"
+          ACCEPT_SDK_LICENSE: "True"
