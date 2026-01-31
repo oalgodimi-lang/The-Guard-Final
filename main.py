@@ -1,23 +1,57 @@
 from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.clock import Clock
-from android.permissions import request_permissions, Permission
-import os
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+from kivy.core.window import Window
 
-class GuardSlim(App):
+# إعدادات الواجهة (الأسود والذهبي للسيادة)
+Window.clearcolor = (0, 0, 0, 1)
+
+class BridgeScreen(Screen):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        layout = BoxLayout(orientation='vertical', padding=50, spacing=30)
+        layout.add_widget(Label(text="[ THE GUARD - NODE 7 ]", font_size='28sp', color=(1, 0.8, 0, 1)))
+        
+        self.password = TextInput(hint_text="Enter Access Code", password=True, multiline=False,
+                                  size_hint=(1, 0.1), background_color=(0.1, 0.1, 0.1, 1),
+                                  foreground_color=(1, 1, 1, 1), halign='center')
+        
+        btn = Button(text="ACTIVATE BRIDGE", size_hint=(1, 0.15), background_color=(0.7, 0, 0, 1))
+        btn.bind(on_press=self.verify_access)
+        
+        layout.add_widget(self.password)
+        layout.add_widget(btn)
+        self.add_widget(layout)
+
+    def verify_access(self, instance):
+        if self.password.text in ["freedom", "499712"]:
+            self.manager.current = 'hub'
+        else:
+            self.password.text = ""
+            self.password.hint_text = "INVALID CODE"
+
+class HubScreen(Screen):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        layout = BoxLayout(orientation='vertical', padding=20, spacing=15)
+        layout.add_widget(Label(text="SECURITY CONTROL CENTER", font_size='22sp', size_hint_y=0.1, color=(1, 0.8, 0, 1)))
+        
+        # الغرف الثلاث المحددة
+        layout.add_widget(Button(text="APP WATCHER (PENDING NERVE)", background_color=(0.1, 0.1, 0.3, 1)))
+        layout.add_widget(Button(text="LAN GHOST (PENDING NERVE)", background_color=(0.1, 0.1, 0.3, 1)))
+        layout.add_widget(Button(text="DATA SENTINEL (PENDING NERVE)", background_color=(0.1, 0.1, 0.3, 1)))
+        
+        self.add_widget(layout)
+
+class GuardApp(App):
     def build(self):
-        self.layout = BoxLayout(orientation='vertical')
-        self.label = Label(text="[ Node 7 - Waiting for Sovereign Access ]", markup=True)
-        self.layout.add_widget(self.label)
-        # طلب الصلاحيات بتكتيك تدريجي لتجنب الانهيار
-        Clock.schedule_once(self.ask_permissions, 1)
-        return self.layout
-
-    def ask_permissions(self, dt):
-        # نطلب الصلاحيات الأساسية أولاً لضمان الإقلاع
-        request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
-        self.label.text = " [cite: 2026-01-10] freedom \nRadar Active: Monitoring wlan0..."
+        sm = ScreenManager()
+        sm.add_widget(BridgeScreen(name='bridge'))
+        sm.add_widget(HubScreen(name='hub'))
+        return sm
 
 if __name__ == '__main__':
-    GuardSlim().run()
+    GuardApp().run()
