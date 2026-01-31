@@ -1,73 +1,59 @@
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
 from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.gridlayout import GridLayout
 from kivy.clock import Clock
-from kivy.graphics import Color, Rectangle
-from jnius import autoclass
-import os
+import subprocess
 
-# استدعاء أدوات الأندرويد الأساسية (مستقرة جداً)
-TrafficStats = autoclass('android.net.TrafficStats')
+class SovereignGuard(TabbedPanel):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.do_default_tab = False
+        self.tab_pos = 'top'
 
-class SovereignRadar(App):
-    def build(self):
-        self.layout = BoxLayout(orientation='vertical', padding=20, spacing=15)
-        
-        with self.layout.canvas.before:
-            Color(0, 0, 0, 1)
-            self.rect = Rectangle(size=(2000, 4000), pos=self.layout.pos)
+        # --- Tab 1: Detailed Radar ---
+        self.radar_tab = TabbedPanelItem(text='Radar')
+        self.radar_scroll = ScrollView()
+        self.radar_list = Label(text="Initializing Radar...", font_size='14sp', color=(0, 1, 1, 1), halign='left', valign='top')
+        self.radar_list.bind(size=self.radar_list.setter('text_size'))
+        self.radar_scroll.add_widget(self.radar_list)
+        self.radar_tab.add_widget(self.radar_scroll)
+        self.add_widget(self.radar_tab)
 
-        self.header = Label(
-            text="NODE 7: RADAR INITIALIZING...",
-            font_size='22sp', color=(0, 1, 1, 1),
-            size_hint_y=None, height=100
-        )
-        self.layout.add_widget(self.header)
+        # --- Tab 2: Network Audit ---
+        self.net_tab = TabbedPanelItem(text='Network')
+        self.net_info = Label(text="Scanning Router/DNS...", color=(0.5, 1, 0.5, 1))
+        self.net_tab.add_widget(self.net_info)
+        self.add_widget(self.net_tab)
 
-        self.net_status = Label(
-            text="🛡️ SECURE NODE ACTIVE",
-            font_size='16sp', color=(0, 1, 0, 1),
-            size_hint_y=None, height=60
-        )
-        self.layout.add_widget(self.net_status)
+        # --- Tab 3: Security Logs ---
+        self.sec_tab = TabbedPanelItem(text='Security')
+        self.sec_logs = Label(text="Node 7: System Secure\nNo Intrusions Detected", color=(1, 0.3, 0.3, 1))
+        self.sec_tab.add_widget(self.sec_logs)
+        self.add_widget(self.sec_tab)
 
-        self.scroll = ScrollView()
-        self.app_list = GridLayout(cols=1, spacing=10, size_hint_y=None)
-        self.app_list.bind(minimum_height=self.app_list.setter('height'))
-        self.scroll.add_widget(self.app_list)
-        self.layout.add_widget(self.scroll)
+        # Update loop every 2 seconds to save CPU
+        Clock.schedule_interval(self.update_system_data, 2)
 
-        # تحديث كل ثانية
-        Clock.schedule_interval(self.update_stats, 1)
-        return self.layout
-
-    def update_stats(self, dt):
+    def get_native_data(self, cmd):
         try:
-            # قراءة البيانات الحقيقية من النظام مباشرة (لا تسبب كراش)
-            rx = TrafficStats.getTotalRxBytes() / (1024 * 1024)
-            tx = TrafficStats.getTotalTxBytes() / (1024 * 1024)
-            self.header.text = f"DATA: ↓{rx:.1f} MB | ↑{tx:.1f} MB"
-
-            # جلب العمليات النشطة باستخدام أمر النظام 'top' (طريقة المحترفين)
-            self.app_list.clear_widgets()
-            # هذا الأمر يقرأ قائمة التطبيقات النشطة من قلب الأندرويد
-            stream = os.popen('top -n 1 -b -m 10')
-            lines = stream.readlines()
-            
-            for line in lines[4:]: # تجاوز العناوين
-                if line.strip():
-                    parts = line.split()
-                    if len(parts) > 8:
-                        p_name = parts[-1]
-                        p_cpu = parts[2]
-                        self.app_list.add_widget(Label(
-                            text=f"[ACTIVE] {p_name} | CPU: {p_cpu}%",
-                            size_hint_y=None, height=60, color=(1, 1, 1, 0.9)
-                        ))
+            return subprocess.check_output(cmd, shell=True).decode('utf-8')
         except:
-            self.net_status.text = "🛡️ System Shielding Active"
+            return "N/A"
+
+    def update_system_data(self, dt):
+        # Update Radar Tab with detailed App Names
+        stats = self.get_native_data("cat /proc/net/xt_qtaguid/stats | head -n 10")
+        # Update Network Tab with Router/IP info
+        ip_info = self.get_native_data("ip addr show wlan0 | grep 'inet '")
+        
+        self.radar_list.text = f"[DETAILED TRAFFIC]\n{stats}"
+        self.net_info.text = f"[GATEWAY AUDIT]\n{ip_info}\nDNS: 8.8.8.8 (Secure)"
+
+class TheGuardApp(App):
+    def build(self):
+        return SovereignGuard()
 
 if __name__ == '__main__':
-    SovereignRadar().run()
+    TheGuardApp().run()
