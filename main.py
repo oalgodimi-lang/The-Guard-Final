@@ -1,4 +1,3 @@
-
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -20,9 +19,9 @@ class LoginScreen(Screen):
         super(LoginScreen, self).__init__(**kwargs)
         self.layout = BoxLayout(orientation='vertical', padding=30, spacing=20)
 
-        # Node 7 Logo Placeholder
+        # Node 7 Logo
         self.node7_logo = Label(
-            text='[color=#00FF00]العقدة 7[/color]\n[size=20]الدرع السيادي[/size]',
+            text='[color=#00FF00]NODE 7[/color]\n[size=20]SOVEREIGN SHIELD[/size]',
             markup=True,
             font_size='48sp',
             halign='center',
@@ -36,7 +35,7 @@ class LoginScreen(Screen):
 
         # Password Input
         self.password_input = TextInput(
-            hint_text='كلمة السر للحرية',
+            hint_text='Key to Freedom',
             password=True,
             multiline=False,
             size_hint_y=0.1,
@@ -44,7 +43,7 @@ class LoginScreen(Screen):
             foreground_color=(0, 1, 0, 1),
             cursor_color=(0, 1, 0, 1),
             font_size='24sp',
-            padding_y=[15, 0], # Fixed padding for now to avoid error
+            padding_y=[15, 0],
             halign='center'
         )
         self.layout.add_widget(self.password_input)
@@ -53,7 +52,7 @@ class LoginScreen(Screen):
         self.status_label = Label(
             text='',
             markup=True,
-            color=(1, 0, 0, 1), # Red for error
+            color=(1, 0, 0, 1),
             font_size='18sp',
             size_hint_y=0.1
         )
@@ -61,7 +60,7 @@ class LoginScreen(Screen):
 
         # Login Button
         login_button = Button(
-            text='ادخل',
+            text='ENTER',
             size_hint_y=0.1,
             background_color=(0, 0.5, 0, 1),
             font_size='24sp'
@@ -75,7 +74,7 @@ class LoginScreen(Screen):
         if self.password_input.text == 'freedom':
             self.manager.current = 'main_app'
         else:
-            self.status_label.text = '[color=#FF0000]كلمة السر خاطئة. حاول مرة أخرى.[/color]'
+            self.status_label.text = '[color=#FF0000]Access Denied. Try Again.[/color]'
             self.animate_shake(self.password_input)
 
     def animate_shake(self, widget):
@@ -88,7 +87,6 @@ class LoginScreen(Screen):
         anim.start(widget)
 
     def animate_logo_pulse(self):
-        # Animation to make the logo pulse by changing its opacity
         anim = Animation(opacity=0.5, duration=1) + \
                Animation(opacity=1.0, duration=1)
         anim.repeat = True
@@ -100,7 +98,7 @@ class MainAppScreen(Screen):
         self.layout = BoxLayout(orientation='vertical', padding=30, spacing=20)
 
         self.title_label = Label(
-            text='[color=#00FF00]مركز القيادة[/color]',
+            text='[color=#00FF00]COMMAND CENTER[/color]',
             markup=True,
             font_size='36sp',
             halign='center',
@@ -109,60 +107,40 @@ class MainAppScreen(Screen):
         )
         self.layout.add_widget(self.title_label)
 
-        # Placeholder for the three rooms
         rooms_layout = BoxLayout(orientation='vertical', spacing=15, size_hint_y=0.7)
 
-        # Room 1: Application Monitoring
+        # Room 1
         room1_button = Button(
-            text='[color=#00FF00]غرفة مراقبة التطبيقات[/color]',
+            text='[color=#00FF00]APP MONITORING[/color]',
             markup=True,
             background_color=(0.1, 0.1, 0.1, 1),
             font_size='28sp',
             size_hint_y=0.33
         )
-        room1_button.bind(on_press=self.open_app_monitoring_room)
         rooms_layout.add_widget(room1_button)
 
-        # Room 2: Network Monitoring and Jamming
+        # Room 2
         room2_button = Button(
-            text='[color=#00FF00]غرفة مراقبة الشبكات والتشويش[/color]',
+            text='[color=#00FF00]NETWORK & JAMMING[/color]',
             markup=True,
             background_color=(0.1, 0.1, 0.1, 1),
             font_size='28sp',
             size_hint_y=0.33
         )
-        room2_button.bind(on_press=self.open_network_monitoring_room)
         rooms_layout.add_widget(room2_button)
 
-        # Room 3: Intrusion Monitoring
+        # Room 3
         room3_button = Button(
-            text='[color=#00FF00]غرفة مراقبة محاولة أي اختراق أو تجسس[/color]',
+            text='[color=#00FF00]INTRUSION DETECTOR[/color]',
             markup=True,
             background_color=(0.1, 0.1, 0.1, 1),
             font_size='28sp',
             size_hint_y=0.33
         )
-        room3_button.bind(on_press=self.open_intrusion_monitoring_room)
         rooms_layout.add_widget(room3_button)
 
         self.layout.add_widget(rooms_layout)
-
         self.add_widget(self.layout)
-
-    def open_app_monitoring_room(self, instance):
-        print('فتح غرفة مراقبة التطبيقات (هيكل صامت)')
-        # Placeholder for future implementation
-        # self.manager.current = 'app_monitoring_screen'
-
-    def open_network_monitoring_room(self, instance):
-        print('فتح غرفة مراقبة الشبكات والتشويش (هيكل صامت)')
-        # Placeholder for future implementation
-        # self.manager.current = 'network_monitoring_screen'
-
-    def open_intrusion_monitoring_room(self, instance):
-        print('فتح غرفة مراقبة الاختراق (هيكل صامت)')
-        # Placeholder for future implementation
-        # self.manager.current = 'intrusion_monitoring_screen'
 
 class SovereignShieldApp(App):
     def build(self):
