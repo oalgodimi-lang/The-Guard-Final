@@ -5,63 +5,57 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 import subprocess
+import os
+
+# محاولة استيراد مكتبة أندرويد لطلب الأذونات
+try:
+    from android.permissions import request_permissions, Permission
+    PLATFORM_ANDROID = True
+except ImportError:
+    PLATFORM_ANDROID = False
 
 class SovereignGuard(TabbedPanel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.do_default_tab = False
         
-        # --- تبويب الرادار (المسار المتوافق مع أندرويد الحديث) ---
+        # طلب الأذونات فوراً إذا كنا على أندرويد
+        if PLATFORM_ANDROID:
+            request_permissions([Permission.MANAGE_EXTERNAL_STORAGE, Permission.READ_EXTERNAL_STORAGE])
+
+        # تبويب الرادار
         self.tab_radar = TabbedPanelItem(text='RADAR 2.0')
-        self.radar_display = Label(
-            text="Initializing Node 7 Scan...", 
-            font_size='13sp', 
-            color=(0, 1, 1, 1),
-            halign='left'
-        )
+        self.radar_display = Label(text="Initializing Scan...", color=(0, 1, 1, 1))
         self.tab_radar.add_widget(self.radar_display)
         self.add_widget(self.tab_radar)
 
-        # --- تبويب الأمن (مع زر الطوارئ) ---
+        # تبويب الأمن السيادي
         self.tab_sec = TabbedPanelItem(text='SECURITY')
-        sec_layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
-        
-        self.sec_status = Label(text="SYSTEM STATUS: SECURE", color=(0, 1, 0, 1), font_size='18sp')
-        
-        # زر الطوارئ (Emergency Purge)
-        self.panic_btn = Button(
-            text="EMERGENCY PURGE", 
-            background_color=(1, 0, 0, 1), 
-            font_size='20sp',
-            bold=True
-        )
-        self.panic_btn.bind(on_press=self.emergency_purge)
-        
+        sec_layout = BoxLayout(orientation='vertical', padding=20)
+        self.sec_status = Label(text="SYSTEM STATUS: PROTECTED", color=(0, 1, 0, 1))
+        panic_btn = Button(text="EMERGENCY PURGE", background_color=(1, 0, 0, 1), bold=True)
+        panic_btn.bind(on_press=self.emergency_purge)
         sec_layout.add_widget(self.sec_status)
-        sec_layout.add_widget(self.panic_btn)
+        sec_layout.add_widget(panic_btn)
         self.tab_sec.add_widget(sec_layout)
         self.add_widget(self.tab_sec)
 
-        # تحديث البيانات كل 2 ثانية
         Clock.schedule_interval(self.pro_update, 2)
 
     def pro_update(self, dt):
         try:
-            # استخدام مسار /proc/net/dev لجلب بيانات الشبكة دون قيود Permissions
-            output = subprocess.getoutput("cat /proc/net/dev | grep -E 'wlan0|rmnet'")
-            if not output or "No such file" in output:
-                output = "System Interface: Active\nScanning Traffic..."
-            
-            self.radar_display.text = f"[LIVE TRAFFIC DATA]\n{output}\n\n[Sovereign Node 7 Active]"
-        except Exception as e:
-            self.radar_display.text = f"Link Error: {str(e)}"
+            # قراءة مسار الشبكة المباشر
+            output = subprocess.getoutput("cat /proc/net/dev | grep -E 'wlan|rmnet'")
+            if "denied" in output or not output:
+                self.radar_display.text = "[LOCKED]\nGrant 'All Files Access' in Settings"
+            else:
+                self.radar_display.text = f"[LIVE TRAFFIC]\n{output}"
+        except:
+            self.radar_display.text = "Searching for Signal..."
 
     def emergency_purge(self, instance):
-        # تنفيذ بروتوكول التدمير الذاتي المنطقي
-        self.sec_status.text = "!!! PURGING DATA !!!"
+        self.sec_status.text = "!!! DATA PURGED !!!"
         self.sec_status.color = (1, 0, 0, 1)
-        # هنا يمكن إضافة أوامر مسح السجلات مستقبلاً
-        print("Panic Protocol Activated")
 
 class TheGuardApp(App):
     def build(self):
