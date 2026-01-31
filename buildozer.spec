@@ -7,7 +7,7 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.3.0
 
 # المكتبات المطلوبة للرادار الحقيقي والشبكة
-requirements = python3,kivy==2.3.0,pyjnius,android,requests
+requirements = python3, kivy==2.3.0, hostpython3
 
 orientation = portrait
 osx.python_version = 3
@@ -15,8 +15,7 @@ osx.kivy_version = 2.3.0
 fullscreen = 0
 
 # الصلاحيات السيادية (أساس العمل)
-android.permissions = INTERNET, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE 
-
+android.permissions = INTERNET, ACCESS_NETWORK_STATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
 android.api = 33
 android.minapi = 21
 android.sdk = 33
