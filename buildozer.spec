@@ -11,7 +11,7 @@ requirements = python3,kivy==2.3.0,pyjnius,android,requests
 
 orientation = portrait
 osx.python_version = 3
-osx.kivy_version = 1.9.1
+osx.kivy_version = 2.3.0
 fullscreen = 0
 
 # الصلاحيات السيادية (أساس العمل)
