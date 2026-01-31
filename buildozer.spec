@@ -15,7 +15,7 @@ osx.kivy_version = 1.9.1
 fullscreen = 0
 
 # الصلاحيات السيادية (أساس العمل)
-android.permissions = MANAGE_EXTERNAL_STORAGE, INTERNET
+android.permissions = INTERNET, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE 
 
 android.api = 33
 android.minapi = 21
