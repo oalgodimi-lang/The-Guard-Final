@@ -7,7 +7,7 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.2.0
 
 # المكتبات المطلوبة للرادار الحقيقي والشبكة
-requirements = python3,kivy==2.3.0,pyjnius,android,requests,psutil,hostpython3
+requirements = python3,kivy==2.3.0,pyjnius,android,requests
 
 orientation = portrait
 osx.python_version = 3
