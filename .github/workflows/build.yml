@@ -31,7 +31,7 @@ jobs:
       # تم حقل هذا الجزء هنا لتوفير أداة Aidl المطلوبة لأندرويد 13
       - name: Install Android Aidl
         run: |
-          sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;33.0.0"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;33.0.0" "platform-tools" "platforms;android-33"
 
       - name: Build with Buildozer
         run: |
