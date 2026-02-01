@@ -1,4 +1,4 @@
-name: Build APK v1.4.5 (The Guard Ultimate)
+name: Build APK v1.4.6 (The Guard Final Push)
 
 on:
   push:
@@ -12,7 +12,6 @@ jobs:
     timeout-minutes: 60
     
     env:
-      # قوة الذاكرة لمنع الانهيار المفاجئ (Broken Pipe)
       _JAVA_OPTIONS: '-Xmx4096m -Xms1024m'
       PYTHONUNBUFFERED: 1
       DEBIAN_FRONTEND: noninteractive
@@ -27,6 +26,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Free Disk Space & Setup Swap
+        run: |
+          # زيادة الذاكرة الافتراضية لمنع الانهيار (Broken pipe)
+          sudo fallocate -l 4G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
+
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -35,14 +43,14 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # 1. تثبيت أدوات الأندرويد المطلوبة لضمان المسارات الصحيحة
+          # 1. تثبيت أدوات الأندرويد لضمان المسارات
           sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.0" "platforms;android-33"
           export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
           
-          # 2. أمر التنظيف مع صمام أمان لتجنب خطأ FileNotFoundError
-          buildozer android clean || echo "Environment already clean"
+          # 2. تنظيف البيئة قبل البدء لضمان عدم وجود ملفات معطلة
+          buildozer android clean || echo "Clean skipped"
           
-          # 3. البناء النهائي والقوي مع الذاكرة الكاملة
+          # 3. البناء النهائي والقوي
           yes | buildozer -v android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
