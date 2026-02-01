@@ -1,20 +1,17 @@
-name: Build APK v1.4.6 (The Guard Final Push)
+name: Build APK v1.4.7 (Lean & Fast)
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
     branches: [ main, master ]
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-    timeout-minutes: 60
     
     env:
-      _JAVA_OPTIONS: '-Xmx4096m -Xms1024m'
+      # تقليل الذاكرة المطلوبة لجافا لكي لا تصطدم بسقف النظام
+      _JAVA_OPTIONS: '-Xmx2048m -Xms512m'
       PYTHONUNBUFFERED: 1
-      DEBIAN_FRONTEND: noninteractive
 
     steps:
       - name: Checkout code
@@ -26,31 +23,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Free Disk Space & Setup Swap
-        run: |
-          # زيادة الذاكرة الافتراضية لمنع الانهيار (Broken pipe)
-          sudo fallocate -l 4G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-          free -h
-
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-pip zip unzip git
+          sudo apt-get install -y build-essential python3-pip zip unzip
           pip3 install buildozer cython==0.29.33 kivy==2.3.0
 
       - name: Build with Buildozer
         run: |
-          # 1. تثبيت أدوات الأندرويد لضمان المسارات
-          sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.0" "platforms;android-33"
-          export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
+          # 1. مسح يدوي خفيف للمجلدات المعطلة فقط
+          [ -d ".buildozer/android/platform/build-arm64-v8a" ] && rm -rf .buildozer/android/platform/build-arm64-v8a || echo "Nothing to clear"
           
-          # 2. تنظيف البيئة قبل البدء لضمان عدم وجود ملفات معطلة
-          buildozer android clean || echo "Clean skipped"
-          
-          # 3. البناء النهائي والقوي
+          # 2. البناء المباشر
           yes | buildozer -v android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
