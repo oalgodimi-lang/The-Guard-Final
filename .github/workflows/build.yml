@@ -34,12 +34,13 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
-          yes | buildozer -v android debug
+          # استخدام خيار -q لمنع انفجار السجلات وضمان وصول العملية للنهاية
+          yes | buildozer -q android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: The-Guard-Sovereign-Final
+          name: The-Guard-Sovereign-v1.4.2
           path: bin/*.apk
