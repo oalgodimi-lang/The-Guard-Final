@@ -1,4 +1,4 @@
-name: Build APK v1.4.4 (The Guard Final)
+name: Build APK v1.4.5 (The Guard Ultimate)
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 60
     
     env:
-      # حقنة الذاكرة القوية لمنع الانهيار المفاجئ (Broken Pipe)
+      # قوة الذاكرة لمنع الانهيار المفاجئ (Broken Pipe)
       _JAVA_OPTIONS: '-Xmx4096m -Xms1024m'
       PYTHONUNBUFFERED: 1
       DEBIAN_FRONTEND: noninteractive
@@ -33,20 +33,16 @@ jobs:
           sudo apt-get install -y build-essential libffi-dev libssl-dev python3-pip zip unzip git
           pip3 install buildozer cython==0.29.33 kivy==2.3.0
 
-      - name: Build with Buildozer (Clean & Build)
+      - name: Build with Buildozer
         run: |
-          # 1. تطهير بقايا المحاولات السابقة لضمان عدم تضارب ملفات Gradle
-          rm -rf .buildozer
-          rm -rf ~/.buildozer
-          
-          # 2. تثبيت أدوات الأندرويد المطلوبة يدوياً
+          # 1. تثبيت أدوات الأندرويد المطلوبة لضمان المسارات الصحيحة
           sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.0" "platforms;android-33"
           export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
           
-          # 3. تنظيف بيئة بناء أندرويد قبل البدء (لحل خطأ gradlew failed)
-          buildozer android clean
+          # 2. أمر التنظيف مع صمام أمان لتجنب خطأ FileNotFoundError
+          buildozer android clean || echo "Environment already clean"
           
-          # 4. الانطلاق في البناء النهائي
+          # 3. البناء النهائي والقوي مع الذاكرة الكاملة
           yes | buildozer -v android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
