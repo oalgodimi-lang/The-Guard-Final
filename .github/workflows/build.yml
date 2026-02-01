@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # العودة للنسخة الأكثر استقراراً
 
     steps:
       - uses: actions/checkout@v4
@@ -15,25 +15,33 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install Dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools zip unzip
-          pip install --upgrade pip buildozer cython==0.29.33 kivy
+          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools git zip unzip target-cli-fb python3-pip
 
-      - name: Install Android Aidl
+      - name: Install Python Tools
         run: |
-          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;33.0.0"
+          python -m pip install --upgrade pip
+          pip install buildozer cython==0.29.33 kivy==2.3.0
+
+      - name: Force Install Android Aidl
+        run: |
+          # قبول التراخيص وتحميل الأدوات يدوياً لضمان عدم حدوث Broken Pipe
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;33.0.0" "platform-tools" "platforms;android-33"
 
       - name: Build with Buildozer
         run: |
-          # تقليل السجلات لتجنب امتلاء الذاكرة
-          yes | buildozer -v android debug
+          # تشغيل البناء مع فرض مسار الأدوات
+          export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
+          buildozer -v android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: The-Guard-Sovereign-v1.3.9
+          name: The-Guard-Final-Sovereign
           path: bin/*.apk
