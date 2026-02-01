@@ -1,12 +1,15 @@
-name: Build APK v1.4.3
+name: Build APK v1.4.3 (Freedom Power)
 
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-22.04
+    timeout-minutes: 60
     env:
-      JVM_HEAP_MEMORY: 4g  # إضافة العضلة التي اقترحها ديب سيك
+      # حقنة الذاكرة القوية من ديب سيك
+      _JAVA_OPTIONS: '-Xmx4096m -Xms1024m'
+      PYTHONUNBUFFERED: 1
 
     steps:
       - uses: actions/checkout@v4
@@ -25,14 +28,17 @@ jobs:
 
       - name: Build with Buildozer
         run: |
+          # تثبيت الأدوات يدوياً لضمان عدم حدوث Broken Pipe
+          sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.0" "platforms;android-33"
           export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
-          # البناء الصامت مع توجيه الخطأ فقط لو حدث
-          yes | buildozer -q android debug
+          # بناء صامت وقوي
+          yes | buildozer -v android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: The-Guard-Final-v1.4.3
+          name: The-Guard-Final
           path: bin/*.apk
