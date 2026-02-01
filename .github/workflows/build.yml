@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # العودة للنسخة الأكثر استقراراً
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools git zip unzip target-cli-fb python3-pip
+          sudo apt-get install -y build-essential libffi-dev libssl-dev python3-setuptools git zip unzip python3-pip
 
       - name: Install Python Tools
         run: |
@@ -27,21 +27,19 @@ jobs:
 
       - name: Force Install Android Aidl
         run: |
-          # قبول التراخيص وتحميل الأدوات يدوياً لضمان عدم حدوث Broken Pipe
           mkdir -p ~/.android
           touch ~/.android/repositories.cfg
           yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;33.0.0" "platform-tools" "platforms;android-33"
 
       - name: Build with Buildozer
         run: |
-          # تشغيل البناء مع فرض مسار الأدوات
           export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
-          buildozer -v android debug
+          yes | buildozer -v android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: The-Guard-Final-Sovereign
+          name: The-Guard-Sovereign-Final
           path: bin/*.apk
