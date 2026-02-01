@@ -1,4 +1,4 @@
-name: Build APK v1.4.7 (Lean & Fast)
+name: Build APK v1.4.8 (The Final Stand)
 
 on:
   push:
@@ -8,11 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     
-    env:
-      # تقليل الذاكرة المطلوبة لجافا لكي لا تصطدم بسقف النظام
-      _JAVA_OPTIONS: '-Xmx2048m -Xms512m'
-      PYTHONUNBUFFERED: 1
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,18 +18,28 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Maximize Build Space
+        run: |
+          # تنظيف مساحة القرص لزيادة الذاكرة الافتراضية
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          # إنشاء Swap بطريقة آمنة
+          sudo dd if=/dev/zero of=/swapfile2 bs=1024 count=4194304
+          sudo chmod 600 /swapfile2
+          sudo mkswap /swapfile2
+          sudo swapon /swapfile2
+
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential python3-pip zip unzip
+          sudo apt-get install -y build-essential python3-pip zip unzip git
           pip3 install buildozer cython==0.29.33 kivy==2.3.0
 
       - name: Build with Buildozer
         run: |
-          # 1. مسح يدوي خفيف للمجلدات المعطلة فقط
-          [ -d ".buildozer/android/platform/build-arm64-v8a" ] && rm -rf .buildozer/android/platform/build-arm64-v8a || echo "Nothing to clear"
-          
-          # 2. البناء المباشر
+          # إجبار جافا على استهلاك ذاكرة محددة لا تفيض عن الحد
+          export JAVA_OPTS="-Xmx2048m"
           yes | buildozer -v android debug
         env:
           ACCEPT_SDK_LICENSE: "True"
@@ -43,5 +48,5 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: The-Guard-Final-Package
+          name: The-Guard-Final-APK
           path: bin/*.apk
