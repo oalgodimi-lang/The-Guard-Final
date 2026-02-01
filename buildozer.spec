@@ -4,7 +4,7 @@ package.name = theguard_n7
 package.domain = org.sovereign
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,xml
-version = 1.3.8
+version = 1.3.9
 
 requirements = python3, kivy==2.3.0, hostpython3, pyjnius
 
