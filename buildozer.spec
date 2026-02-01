@@ -18,8 +18,8 @@ android.api = 33
 android.minapi = 21
 android.ndk = 25b
 android.archs = arm64-v8a
-android.enable_androidx = True. 
-android.skip_update = False
+android.enable_androidx = 1
+android.skip_update = 0
 log_level = 1
 p4a.branch = master
 
