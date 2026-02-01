@@ -1,27 +1,29 @@
 [app]
-title = The Guard - Node 7
-package.name = theguard_n7
-package.domain = org.sovereign
+title = The Guard
+package.name = theguard
+package.domain = org.freedom
 source.dir = .
-source.include_exts = py,png,jpg,kv,atlas,xml
-version = 1.4.2
+source.include_exts = py,png,jpg,kv,atlas
+version = 1.4.8
 
-requirements = python3, kivy==2.3.0, hostpython3, pyjnius
+# تقليل المتطلبات للحد الأدنى لتجنب الاختناق
+requirements = python3,kivy==2.3.0,requests
 
 orientation = portrait
-osx.python_version = 3
-osx.kivy_version = 2.3.0
 fullscreen = 0
+android.archs = armeabi-v7a
 
-android.permissions = INTERNET, ACCESS_NETWORK_STATE, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, PACKAGE_USAGE_STATS, READ_PHONE_STATE
+# الصلاحيات الأساسية فقط (غرفة واحدة)
+android.permissions = INTERNET, ACCESS_NETWORK_STATE
+
+python-for-android.branch = release-2022.12.20
 android.api = 33
 android.minapi = 21
+android.sdk = 33
 android.ndk = 25b
-android.archs = arm64-v8a
-android.enable_androidx = 1
-android.skip_update = 0
-log_level = 1
-p4a.branch = master
+android.skip_update = False
+android.accept_sdk_license = True
 
-# هذه هي الضربة القاضية: القراءة من ملف خارجي لتجنب الحرق
-android.extra_manifest_xml = ./extra_manifest.xml
+[buildozer]
+log_level = 2
+warn_on_root = 1
