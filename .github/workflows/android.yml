@@ -15,15 +15,18 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install Android Build Tools
+      - name: Install Dependencies
         run: |
           sudo apt update
-          # قمنا بحذف libtinfo5 التي تسبب الخطأ وأضفنا المكتبات الأساسية فقط
           sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip install --upgrade pip
+          # تثبيت Cython أولاً وهو المفتاح المفقود
+          pip install "cython<3.0" 
           pip install buildozer kivy
 
       - name: Build Sovereign APK
         run: |
-          # أمر "yes" لضمان الموافقة التلقائية على رخص الأندرويد
+          # إضافة تثبيت المتطلبات داخل السيرفر لضمان عدم نقص أي أداة
+          buildozer android debug || true
+          # سنستخدم هذا الأمر للتأكد من قبول الرخص
           yes | buildozer android debug
