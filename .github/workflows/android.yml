@@ -15,9 +15,8 @@ jobs:
           sudo rm -rf /usr/local/lib/android /usr/local/share/powershell
           docker image prune -a -f
 
-      
       - name: Build with Buildozer
-        uses: kivy/buildozer-action@v1
+        uses: kivy/buildozer-action@master
         with:
           buildozer_version: master
           command: buildozer android debug
