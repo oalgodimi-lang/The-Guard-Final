@@ -1,1 +1,22 @@
+name: Guard Final Build
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Memory Optimization
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc "/usr/local/share/boost"
+          sudo rm -rf /usr/local/lib/android /usr/local/share/powershell
+          docker image prune -a -f
+
+      - name: Build with Buildozer
+        uses: kivy/buildozer-action@master
+        with:
+          buildozer_version: master
+          command: buildozer android debug
+          repository_root: .
 
