@@ -1,4 +1,4 @@
-name: Build Guard 122
+name: Build Guard 131
 on: [push]
 
 jobs:
@@ -7,19 +7,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # خطوة "تفتيت الضغط" وتنظيف السيرفر لتوفير مساحة للبناء
+      # 1. تنظيف عميق للسيرفر لتوفير مساحة للـ RAM (خطة القرين)
       - name: Free Disk Space
         run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/local/share/powershell
-          sudo rm -rf /usr/local/lib/node_modules
+          sudo rm -rf /usr/share/dotnet /opt/ghc "/usr/local/share/boost"
+          sudo rm -rf /usr/local/lib/android /usr/local/share/powershell
+          docker image prune -a -f
 
-      # استخدام أداة البناء الرسمية والمستقرة لتجاوز خطأ "Unable to resolve action"
+      # 2. بناء التطبيق باستخدام الأداة المعتمدة والمستقرة
       - name: Build with Buildozer
-        uses: akshayaurora/buildozer-action@master
+        uses: kivy/buildozer-action@master
         with:
+          buildozer_version: master
           command: buildozer android debug
           repository_root: .
