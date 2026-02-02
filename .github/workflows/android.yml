@@ -9,16 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # خطة القرين لتفريغ الذاكرة لضمان عدم الانهيار
-      - name: Freeing RAM
+      - name: Memory Optimization
         run: |
           sudo rm -rf /usr/share/dotnet /opt/ghc "/usr/local/share/boost"
           sudo rm -rf /usr/local/lib/android /usr/local/share/powershell
           docker image prune -a -f
 
-      # استخدام النسخة المستقرة والمؤكدة من أداة البناء
       - name: Build with Buildozer
-        uses: ArtemSerebrennkov/buildozer-action@v1
+        uses: kivy/buildozer-action@master
         with:
           command: buildozer android debug
           repository_root: .
