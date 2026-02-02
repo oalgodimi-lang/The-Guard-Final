@@ -1,4 +1,4 @@
-name: Guard Final Build
+name: Node7 Sovereign Build
 on:
   push:
     branches: [ main ]
