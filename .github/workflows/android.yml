@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Memory Optimization
+      - name: Freeing RAM
         run: |
           sudo rm -rf /usr/share/dotnet /opt/ghc "/usr/local/share/boost"
           sudo rm -rf /usr/local/lib/android /usr/local/share/powershell
@@ -18,6 +18,5 @@ jobs:
       - name: Build with Buildozer
         uses: kivy/buildozer-action@master
         with:
-          buildozer_version: master
           command: buildozer android debug
           repository_root: .
