@@ -7,18 +7,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # خطوة تنظيف السيرفر لتجاوز "عنق الزجاجة"
+      # خطوة "تفتيت الضغط" وتنظيف السيرفر لتوفير مساحة للبناء
       - name: Free Disk Space
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/lib/node_modules
 
-      # بناء التطبيق مع تصحيح رابط الأداة
+      # استخدام أداة البناء الرسمية والمستقرة لتجاوز خطأ "Unable to resolve action"
       - name: Build with Buildozer
-        uses: ArtemSerebriakov/buildozer-action@v1
+        uses: akshayaurora/buildozer-action@master
         with:
-          buildozer_version: master
           command: buildozer android debug
           repository_root: .
