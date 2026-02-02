@@ -20,15 +20,15 @@ jobs:
           sudo apt update
           sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip install --upgrade pip
-          pip install "cython<3.0"
-          pip install buildozer kivy kivymd pillow
+          pip install "cython<3.0" buildozer kivy kivymd pillow
 
       - name: Build Sovereign APK
         run: |
-          # حذفنا أمر clean لتجنب خطأ missing directory الموضح في الصورة الأخيرة
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
-          yes | buildozer android debug
+          # استخدام أمر مخصص لتقليل استهلاك الموارد ومنع انقطاع الأنبوب
+          buildozer android debug || buildozer android debug
+        shell: bash
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
