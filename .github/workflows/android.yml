@@ -26,12 +26,7 @@ jobs:
         run: |
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
-          # استخدام أمر مخصص لتقليل استهلاك الموارد ومنع انقطاع الأنبوب
-          buildozer android debug || buildozer android debug
-        shell: bash
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Guard-Sovereign-Shield
-          path: bin/*.apk
+          # منع Buildozer من محاولة تحديث الأدوات لنسخ تجريبية غير مستقرة
+          export BUILDOZER_ALLOW_ORG_NAME_ANYWHERE=1
+          # الأمر السحري لقبول كافة التراخيص تلقائياً قبل بدء البناء
+          yes | buildozer android debug
