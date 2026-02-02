@@ -1,8 +1,7 @@
 name: Node7 Sovereign Build
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
@@ -10,15 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Memory Optimization
+      # خطة القرين لتفريغ الذاكرة لضمان عدم الانهيار
+      - name: Freeing RAM
         run: |
           sudo rm -rf /usr/share/dotnet /opt/ghc "/usr/local/share/boost"
           sudo rm -rf /usr/local/lib/android /usr/local/share/powershell
           docker image prune -a -f
 
+      # استخدام النسخة المستقرة والمؤكدة من أداة البناء
       - name: Build with Buildozer
-        uses: kivy/buildozer-action@master
+        uses: ArtemSerebrennkov/buildozer-action@v1
         with:
-          buildozer_version: master
           command: buildozer android debug
           repository_root: .
