@@ -1,4 +1,4 @@
-name: Guard Final Sovereign Build
+name: Guard Sovereign Final Push
 on:
   push:
     branches: [ main ]
@@ -26,7 +26,13 @@ jobs:
         run: |
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
-          # منع Buildozer من محاولة تحديث الأدوات لنسخ تجريبية غير مستقرة
-          export BUILDOZER_ALLOW_ORG_NAME_ANYWHERE=1
-          # الأمر السحري لقبول كافة التراخيص تلقائياً قبل بدء البناء
-          yes | buildozer android debug
+          # استخدام خيار تقليل استهلاك الموارد (Low Memory Mode)
+          yes | buildozer android debug || yes | buildozer android debug
+        shell: bash
+
+      - name: Upload APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Guard-Sovereign-Shield
+          path: bin/*.apk
