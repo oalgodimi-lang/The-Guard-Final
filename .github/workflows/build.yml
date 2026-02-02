@@ -1,52 +1,23 @@
-name: Build APK v1.4.8 (The Final Stand)
-
-on:
-  push:
-    branches: [ main, master ]
+name: Build Guard 122
+on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
-    
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Maximize Build Space
+      # خطوة تحسين الذاكرة كما طلب القرين لتجنب الانهيار
+      - name: Free Disk Space
         run: |
-          # تنظيف مساحة القرص لزيادة الذاكرة الافتراضية
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
           sudo rm -rf "/usr/local/share/boost"
-          # إنشاء Swap بطريقة آمنة
-          sudo dd if=/dev/zero of=/swapfile2 bs=1024 count=4194304
-          sudo chmod 600 /swapfile2
-          sudo mkswap /swapfile2
-          sudo swapon /swapfile2
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential python3-pip zip unzip git
-          pip3 install buildozer cython==0.29.33 kivy==2.3.0
+          sudo rm -rf /usr/local/lib/android # حذف النسخ القديمة لتوفير مساحة
 
       - name: Build with Buildozer
-        run: |
-          # إجبار جافا على استهلاك ذاكرة محددة لا تفيض عن الحد
-          export JAVA_OPTS="-Xmx2048m"
-          yes | buildozer -v android debug
-        env:
-          ACCEPT_SDK_LICENSE: "True"
-
-      - name: Upload APK
-        if: success()
-        uses: actions/upload-artifact@v4
+        uses: ArtemSerebriakov/buildozer-action@v1
         with:
-          name: The-Guard-Final-APK
-          path: bin/*.apk
+          buildozer_version: master
+          command: buildozer android debug
+          repository_root: .
