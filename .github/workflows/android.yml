@@ -16,7 +16,8 @@ jobs:
           docker image prune -a -f
 
       - name: Build with Buildozer
-        uses: kivy/buildozer-action@master
+        uses: akshayaurora/buildozer-action@master
         with:
+          buildozer_version: master
           command: buildozer android debug
           repository_root: .
