@@ -8,35 +8,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
       - name: Install Android Build Tools
         run: |
           sudo apt update
-          # تثبيت المكتبات الأساسية مع استبعاد libtinfo5 لتجنب خطأ النظام
           sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip install --upgrade pip
-          # تثبيت Cython بنسخة مستقرة قبل البدء لحل مشكلة السطر 24
           pip install "cython<3.0"
           pip install buildozer kivy kivymd pillow
 
       - name: Build Sovereign APK
         run: |
-          # تنظيف أي مخلفات سابقة لضمان بداية نقية وتجنب الـ Broken pipe
           buildozer android clean
-          # إعدادات لضمان تشغيل صامت وتجنب خطأ ioctl المكتشف في الصورة الأخيرة
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
-          # الموافقة التلقائية على رخص الأندرويد وبدء البناء النهائي
           yes | buildozer android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Guard-Sovereign-Shield
           path: bin/*.apk
