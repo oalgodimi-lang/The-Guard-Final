@@ -25,7 +25,7 @@ jobs:
 
       - name: Build Sovereign APK
         run: |
-          buildozer android clean
+          # حذفنا أمر clean لتجنب خطأ missing directory الموضح في الصورة الأخيرة
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
           yes | buildozer android debug
