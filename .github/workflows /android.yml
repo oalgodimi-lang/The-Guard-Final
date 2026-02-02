@@ -1,7 +1,8 @@
 name: Node7 Sovereign Build
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
