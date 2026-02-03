@@ -1,31 +1,7 @@
-name: Android Build Sovereign Shield
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.9'
-
-    - name: Free Disk Space & Optimization
+    - name: Clean Environment
       run: |
-        # حذف الملفات غير الضرورية في السيرفر لتوفير مساحة للـ SDK
-        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
-        # تهيئة الذاكرة الافتراضية (Swap) لتعويض نقص الرام
-        sudo fallocate -l 4G /swapfile
-        sudo chmod 600 /swapfile
-        sudo mkswap /swapfile
-        sudo swapon /swapfile
+        # حذف الملفات الزائدة برمجياً قبل البدء
+        rm -f extra_manifest.xml service.py README.md
 
     - name: Install Android Build Tools
       run: |
@@ -36,16 +12,6 @@ jobs:
       run: |
         export LC_ALL=C.UTF-8
         export LANG=C.UTF-8
-        # تقليل استهلاك الجافا للحد الأدنى المستقر
-        export _JAVA_OPTIONS="-Xmx2g -Xms1024m"
-        # تشغيل البناء مع تفعيل وضع تقليل استهلاك الموارد
+        # تخصيص ذاكرة مستقرة لا تسبب Broken pipe
+        export _JAVA_OPTIONS="-Xmx2048m -Xms512m"
         yes | buildozer android debug
-      env:
-        BUILDOZER_ALLOW_ORG_NAME_START_WITH_DIGIT: 1
-
-    - name: Upload APK
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: Guard-Sovereign-Shield
-        path: bin/*.apk
