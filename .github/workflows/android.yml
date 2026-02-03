@@ -1,17 +1,17 @@
-    - name: Clean Environment
-      run: |
-        # حذف الملفات الزائدة برمجياً قبل البدء
-        rm -f extra_manifest.xml service.py README.md
+      - name: Clean Environment
+        run: |
+          # حذف الملفات الزائدة برمجياً قبل البدء
+          rm -f extra_manifest.xml service.py README.md
 
-    - name: Install Android Build Tools
-      run: |
-        pip install --upgrade pip
-        pip install "cython<3.0" buildozer kivy kivymd pillow
+      - name: Install Android Build Tools
+        run: |
+          pip install --upgrade pip
+          pip install "cython<3.0" buildozer kivy kivymd pillow
 
-    - name: Build Sovereign APK
-      run: |
-        export LC_ALL=C.UTF-8
-        export LANG=C.UTF-8
-        # تخصيص ذاكرة مستقرة لا تسبب Broken pipe
-        export _JAVA_OPTIONS="-Xmx2048m -Xms512m"
-        yes | buildozer android debug
+      - name: Build Sovereign APK
+        run: |
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+          # تخصيص ذاكرة مستقرة لا تسبب Broken pipe
+          export _JAVA_OPTIONS="-Xmx2048m -Xms512m"
+          yes | buildozer android debug
