@@ -1,38 +1,43 @@
-name: Guard Sovereign Final Push
+name: Android Build Sovereign Shield
+
 on:
   push:
+    branches: [ main ]
+  pull_request:
     branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
 
-      - name: Install Android Build Tools
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
-          pip install --upgrade pip
-          pip install "cython<3.0" buildozer kivy kivymd pillow
+    - name: Install Android Build Tools
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libffi-dev libssl-dev
+        pip install --upgrade pip
+        pip install "cython<3.0" buildozer kivy kivymd pillow
 
-      - name: Build Sovereign APK
-        run: |
-          export LC_ALL=C.UTF-8
-          export LANG=C.UTF-8
-          # استخدام خيار تقليل استهلاك الموارد (Low Memory Mode)
-          yes | buildozer android debug || yes | buildozer android debug
-        shell: bash
+    - name: Build Sovereign APK
+      run: |
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+        # تخصيص الذاكرة لمنع Broken pipe (استخدام 4 جيجا رام)
+        export _JAVA_OPTIONS="-Xmx4g -Xms2048m"
+        # أمر البناء مع تخطي الأسئلة التفاعلية
+        yes | buildozer android debug
 
-      - name: Upload APK
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Guard-Sovereign-Shield
-          path: bin/*.apk
+    - name: Upload APK
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Guard-Sovereign-Shield
+        path: bin/*.apk
