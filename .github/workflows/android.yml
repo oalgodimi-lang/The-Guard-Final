@@ -15,3 +15,4 @@
           # تخصيص ذاكرة مستقرة لا تسبب Broken pipe
           export _JAVA_OPTIONS="-Xmx2048m -Xms512m"
           yes | buildozer android debug
+ 
