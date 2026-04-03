@@ -1,9 +1,22 @@
-      - name: Clean Environment
-        run: |
-          # حذف الملفات الزائدة برمجياً قبل البدء
-          rm -f extra_manifest.xml service.py README.md
+name: Build Sovereign Guard
 
-      - name: Install Android Build Tools
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install Build Tools
         run: |
           pip install --upgrade pip
           pip install "cython<3.0" buildozer kivy kivymd pillow
@@ -12,7 +25,5 @@
         run: |
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
-          # تخصيص ذاكرة مستقرة لا تسبب Broken pipe
           export _JAVA_OPTIONS="-Xmx2048m -Xms512m"
           yes | buildozer android debug
- 
